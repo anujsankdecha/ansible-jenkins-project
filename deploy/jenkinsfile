@@ -16,7 +16,7 @@ pipeline {
 
         stage('Deploy Ansible Playbook') {
             steps {
-              dir('ansible-project/'){  
+              dir('ansible-jenkins-project/'){  
                 sh ' ansible-playbook playbook.yaml '
               } 
             }
