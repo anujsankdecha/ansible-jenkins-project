@@ -12,32 +12,10 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/anujsankdecha/ansible-jenkins-project.git'
             }
         }
-        stage('Setup Ansible Config') {
-            steps {
-                sh '''
-                # Create ansible.cfg with host key checking disabled
-                echo -e "[defaults]\ninventory = ./inventory\nhost_key_checking = False\n\n[privilege_escalation]\nbecome = True\nbecome_ask_pass = False\nbecome_method = sudo\nbecome_user = root" > ansible.cfg
-                '''
-            }
-        }
-        stage('Copy Files to Directory') {
-            steps {
-                sh '''
-                cp -v playbook.yaml ansible-jenkins-project/
-                cp -v ansible.cfg ansible-jenkins-project/
-                cp -v inventory ansible-jenkins-project/
-                '''
-            }
-        }
         stage('Deploy Ansible Playbook') {
             steps {
-                dir('ansible-jenkins-project') {
-                    sh '''
-                    echo "Testing Ansible connection..."
-                    ansible all_servers -m ping
-                    echo "Running Ansible playbook..."
-                    ansible-playbook playbook.yaml
-                    '''
+                dir('ansible-jenkins-project') {  
+                    sh 'ansible-playbook playbook.yaml'
                 }
             }
         }
