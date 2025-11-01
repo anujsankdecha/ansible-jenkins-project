@@ -12,10 +12,29 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/anujsankdecha/ansible-jenkins-project.git'
             }
         }
+        stage('Copy Files to Directory') {
+            steps {
+                sh '''
+                echo "Current directory:"
+                pwd
+                echo "Files in current directory:"
+                ls -la
+                echo "Copying Ansible files to ansible-jenkins-project directory..."
+                cp -v playbook.yaml ansible-jenkins-project/ || echo "playbook.yaml not found in root"
+                cp -v ansible.cfg ansible-jenkins-project/ || echo "ansible.cfg not found in root"
+                cp -v inventory ansible-jenkins-project/ || echo "inventory not found in root"
+                '''
+            }
+        }
         stage('Deploy Ansible Playbook') {
             steps {
-                dir('ansible-jenkins-project') {  
-                    sh 'ansible-playbook playbook.yaml'
+                dir('ansible-jenkins-project') {
+                    sh '''
+                    echo "Files in ansible-jenkins-project directory:"
+                    ls -la
+                    echo "Running Ansible playbook..."
+                    ansible-playbook playbook.yaml
+                    '''
                 }
             }
         }
