@@ -1,1 +1,1 @@
-localhost ansible_user=jenmaster.com ansible_ssh_private_key_file=.ssh/authorized_keys
+localhost ansible_user=jenslave.com ansible_ssh_private_key_file=.ssh/id_rsa
