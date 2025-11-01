@@ -12,17 +12,20 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/anujsankdecha/ansible-jenkins-project.git'
             }
         }
+        stage('Setup Ansible Config') {
+            steps {
+                sh '''
+                # Create ansible.cfg with host key checking disabled
+                echo -e "[defaults]\ninventory = ./inventory\nhost_key_checking = False\n\n[privilege_escalation]\nbecome = True\nbecome_ask_pass = False\nbecome_method = sudo\nbecome_user = root" > ansible.cfg
+                '''
+            }
+        }
         stage('Copy Files to Directory') {
             steps {
                 sh '''
-                echo "Current directory:"
-                pwd
-                echo "Files in current directory:"
-                ls -la
-                echo "Copying Ansible files to ansible-jenkins-project directory..."
-                cp -v playbook.yaml ansible-jenkins-project/ || echo "playbook.yaml not found in root"
-                cp -v ansible.cfg ansible-jenkins-project/ || echo "ansible.cfg not found in root"
-                cp -v inventory ansible-jenkins-project/ || echo "inventory not found in root"
+                cp -v playbook.yaml ansible-jenkins-project/
+                cp -v ansible.cfg ansible-jenkins-project/
+                cp -v inventory ansible-jenkins-project/
                 '''
             }
         }
@@ -30,8 +33,8 @@ pipeline {
             steps {
                 dir('ansible-jenkins-project') {
                     sh '''
-                    echo "Files in ansible-jenkins-project directory:"
-                    ls -la
+                    echo "Testing Ansible connection..."
+                    ansible all_servers -m ping
                     echo "Running Ansible playbook..."
                     ansible-playbook playbook.yaml
                     '''
