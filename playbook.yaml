@@ -1,0 +1,21 @@
+---
+- name: Install and setup web application using ansible automtion
+  hosts: all
+  tasks:
+    
+    - name: Install Apache web server
+      yum:
+        name: httpd
+        state: latest
+
+    - name: copy source in var/www/html
+      copy:
+        src: ./src/
+        dest: /var/www/html/
+        force: yes
+
+    - name: Start and enable httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: yes    
